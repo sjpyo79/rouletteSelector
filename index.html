@@ -7,6 +7,21 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+    <link rel="icon" type="image/png" sizes="192x192" href="iconfile.png">
+    <meta property="og:title" content="룰렛 점심메뉴 선택기">
+    <meta property="og:description" content="점심 메뉴를 룰렛으로 재미있게 무작위 선택!">
+    <meta property="og:image" content="thumbnail.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/yourusername/rouletteSelector">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
 </head>
 <body>
     <div class="container">
