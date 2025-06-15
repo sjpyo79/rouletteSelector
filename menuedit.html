@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메뉴 편집</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .edit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+        .edit-table th, .edit-table td {
+            border: 1px solid #ccc;
+            padding: 0.5rem 1rem;
+            text-align: center;
+        }
+        .edit-table th {
+            background: #f5f5f5;
+        }
+        .edit-table input[type="text"], .edit-table input[type="number"] {
+            width: 90%;
+            padding: 0.3rem;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display:flex;align-items:center;">
+            <button onclick="window.location.href='index.html'" style="margin-right:1rem;">돌아가기</button>
+            <h2 style="margin:0;">메뉴 편집</h2>
+        </div>
+        <form id="menuEditForm">
+            <table class="edit-table">
+                <thead>
+                    <tr>
+                        <th>순번</th>
+                        <th>메뉴명</th>
+                        <th>Percent(%)</th>
+                    </tr>
+                </thead>
+                <tbody id="menuTableBody">
+                    <!-- JS로 행이 추가됩니다 -->
+                </tbody>
+            </table>
+            <button type="button" id="addRowBtn" style="margin-top:1rem;">행 추가</button>
+            <button type="submit" style="margin-top:1rem;">저장</button>
+        </form>
+    </div>
+    <script>
+    // 예시 데이터 (실제 앱에서는 localStorage 등에서 불러올 수 있음)
+    let menuItems = [
+        { name: '삼겹살', percent: 30 },
+        { name: '오리고기', percent: 10 },
+        { name: '비빔밥', percent: 10 },
+        { name: '제육볶음', percent: 20 },
+        { name: '돈까스', percent: 10 }
+    ];
+    // localStorage에 저장된 값이 있으면 그걸로 대체
+    const saved = localStorage.getItem('rouletteMenuItems');
+    if (saved) {
+        try {
+            const arr = JSON.parse(saved);
+            if (Array.isArray(arr) && arr.every(item => item.name && typeof item.percent === 'number')) {
+                menuItems = arr;
+            }
+        } catch (e) {}
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('menuTableBody');
+        tbody.innerHTML = '';
+        menuItems.forEach((item, idx) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${idx + 1}</td>
+                <td><input type="text" value="${item.name}" /></td>
+                <td><input type="number" min="0" max="100" value="${item.percent}" /></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    document.getElementById('addRowBtn').addEventListener('click', () => {
+        menuItems.push({ name: '', percent: 0 });
+        renderTable();
+    });
+
+    document.getElementById('menuEditForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // 입력값 반영
+        const rows = document.querySelectorAll('#menuTableBody tr');
+        menuItems = Array.from(rows).map(row => {
+            const name = row.children[1].querySelector('input').value.trim();
+            const percent = parseInt(row.children[2].querySelector('input').value, 10) || 0;
+            return { name, percent };
+        });
+        // localStorage에 저장
+        localStorage.setItem('rouletteMenuItems', JSON.stringify(menuItems));
+        alert('저장되었습니다!');
+    });
+
+    renderTable();
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회식 메뉴 룰렛</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="rouletteScreen">
+            <h1>오늘의 점심 메뉴</h1>
+            <div class="roulette-container">
+                <div class="pointer"></div>
+                <div class="roulette">
+                    <svg class="wheel" width="400" height="400" viewBox="0 0 400 400"></svg>
+                </div>
+            </div>
+            <button id="spinButton">룰렛 돌리기</button>
+            <button id="editMenuButton" onclick="window.location.href='menuedit.html'">메뉴 편집</button>
+        </div>
+        <div id="editScreen" style="display:none;">
+            <div style="display:flex;align-items:center;">
+                <button id="backToRoulette" style="margin-right:1rem;">돌아가기</button>
+                <h2 style="margin:0;">메뉴 편집</h2>
+            </div>
+            <!-- 메뉴 편집 폼은 추후 구현 -->
+            <p>여기에 메뉴 편집 UI가 들어갑니다.</p>
+        </div>
+    </div>
+    <div class="popup" id="resultPopup">
+        <div class="popup-content">
+            <h2>오늘의 메뉴</h2>
+            <p id="selectedMenu"></p>
+            <button id="closePopup">닫기</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
