@@ -88,8 +88,46 @@ const spinAudio = new Audio('spin.mp3');
 // 축하 효과음 객체 준비
 const celebrateAudio = new Audio('celebrate.mp3');
 
+let powerValue = 0; // 0~1
+let powerTimer = null;
+let powerStartTime = 0;
+const MAX_HOLD_TIME = 2000; // ms, 2초 이상은 최대치
+
+function setPowerBar(val) {
+    const bar = document.getElementById('powerBar');
+    bar.style.height = `${Math.round(val * 100)}%`;
+}
+
+function startPowerBar() {
+    powerStartTime = Date.now();
+    powerValue = 0;
+    setPowerBar(0);
+    if (powerTimer) clearInterval(powerTimer);
+    powerTimer = setInterval(() => {
+        const elapsed = Date.now() - powerStartTime;
+        powerValue = Math.min(elapsed / MAX_HOLD_TIME, 1);
+        setPowerBar(powerValue);
+    }, 16);
+}
+
+function stopPowerBarAndSpin() {
+    if (powerTimer) clearInterval(powerTimer);
+    setPowerBar(0);
+    spinRoulette(powerValue);
+    powerValue = 0;
+}
+
+function setupSpinButtonPower() {
+    const btn = document.getElementById('spinButton');
+    btn.addEventListener('mousedown', startPowerBar);
+    btn.addEventListener('touchstart', startPowerBar);
+    btn.addEventListener('mouseup', stopPowerBarAndSpin);
+    btn.addEventListener('mouseleave', () => { if (powerValue > 0) stopPowerBarAndSpin(); });
+    btn.addEventListener('touchend', stopPowerBarAndSpin);
+}
+
 // 룰렛 회전 애니메이션 (percent 기반 선택)
-function spinRoulette() {
+function spinRoulette(power = 0.5) {
     const wheel = document.querySelector('.wheel');
     const spinButton = document.getElementById('spinButton');
     const popup = document.getElementById('resultPopup');
@@ -101,17 +139,20 @@ function spinRoulette() {
         spinAudio.currentTime = 0;
         spinAudio.play();
     } catch (e) {}
-    const rotations = 5 + Math.random() * 5;
+    // power: 0~1, 회전수 3~10, duration 3~6초
+    const minRot = 3, maxRot = 10;
+    const minDur = 3, maxDur = 6;
+    const rotations = minRot + (maxRot - minRot) * power;
+    const duration = minDur + (maxDur - minDur) * (1 - power); // power 높을수록 duration 짧게
     const targetAngle = rotations * 360 + Math.random() * 360;
     gsap.to(wheel, {
         rotation: targetAngle,
-        duration: 5,
+        duration: duration,
         ease: "power2.out",
         onComplete: () => {
             // 효과음 정지
             try { spinAudio.pause(); spinAudio.currentTime = 0; } catch (e) {}
             const finalRotation = targetAngle % 360;
-            // 0도(위쪽) 기준으로 시계방향으로 누적 각도 계산
             let accAngle = 0;
             let selected = null;
             const items = window._rouletteItems || getMenuItems();
@@ -146,6 +187,7 @@ function spinRoulette() {
 // 이벤트 리스너 설정
 document.addEventListener('DOMContentLoaded', () => {
     initializeRoulette();
+    setupSpinButtonPower();
     const spinButton = document.getElementById('spinButton');
     const closePopup = document.getElementById('closePopup');
     const popup = document.getElementById('resultPopup');
