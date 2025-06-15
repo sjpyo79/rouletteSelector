@@ -45,6 +45,7 @@
                     <!-- JS로 행이 추가됩니다 -->
                 </tbody>
             </table>
+            <div id="percentSumBox" style="margin-top:1rem; font-weight:bold;"></div>
             <button type="button" id="addRowBtn" style="margin-top:1rem;">행 추가</button>
             <button type="submit" style="margin-top:1rem;">저장</button>
         </form>
@@ -81,6 +82,22 @@
             `;
             tbody.appendChild(tr);
         });
+        updatePercentSum();
+    }
+
+    function updatePercentSum() {
+        const rows = document.querySelectorAll('#menuTableBody tr');
+        let sum = 0;
+        rows.forEach(row => {
+            sum += parseInt(row.children[2].querySelector('input').value, 10) || 0;
+        });
+        const box = document.getElementById('percentSumBox');
+        box.textContent = `합계: ${sum} %`;
+        if (sum > 100) {
+            box.style.color = 'red';
+        } else {
+            box.style.color = 'green';
+        }
     }
 
     document.getElementById('addRowBtn').addEventListener('click', () => {
@@ -88,15 +105,23 @@
         renderTable();
     });
 
+    document.getElementById('menuEditForm').addEventListener('input', updatePercentSum);
+
     document.getElementById('menuEditForm').addEventListener('submit', function(e) {
         e.preventDefault();
         // 입력값 반영
         const rows = document.querySelectorAll('#menuTableBody tr');
+        let sum = 0;
         menuItems = Array.from(rows).map(row => {
             const name = row.children[1].querySelector('input').value.trim();
             const percent = parseInt(row.children[2].querySelector('input').value, 10) || 0;
+            sum += percent;
             return { name, percent };
         });
+        if (sum > 100) {
+            alert('percent의 합계가 100을 초과할 수 없습니다!');
+            return;
+        }
         // localStorage에 저장
         localStorage.setItem('rouletteMenuItems', JSON.stringify(menuItems));
         alert('저장되었습니다!');

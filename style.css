@@ -139,4 +139,18 @@ h1 {
 
 #closePopup:hover {
     background-color: #555;
+}
+
+#mainFooter {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    text-align: center;
+    color: #888;
+    font-size: 1rem;
+    background: transparent;
+    z-index: 2000;
+    padding: 1rem 0 0.5rem 0;
+    pointer-events: none;
 } 

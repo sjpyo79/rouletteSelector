@@ -83,6 +83,11 @@ function initializeRoulette() {
     window._rouletteItems = items;
 }
 
+// 효과음 객체 준비
+const spinAudio = new Audio('spin.mp3');
+// 축하 효과음 객체 준비
+const celebrateAudio = new Audio('celebrate.mp3');
+
 // 룰렛 회전 애니메이션 (percent 기반 선택)
 function spinRoulette() {
     const wheel = document.querySelector('.wheel');
@@ -91,6 +96,11 @@ function spinRoulette() {
     const selectedMenu = document.getElementById('selectedMenu');
     
     spinButton.disabled = true;
+    // 효과음 재생 (처음부터)
+    try {
+        spinAudio.currentTime = 0;
+        spinAudio.play();
+    } catch (e) {}
     const rotations = 5 + Math.random() * 5;
     const targetAngle = rotations * 360 + Math.random() * 360;
     gsap.to(wheel, {
@@ -98,6 +108,8 @@ function spinRoulette() {
         duration: 5,
         ease: "power2.out",
         onComplete: () => {
+            // 효과음 정지
+            try { spinAudio.pause(); spinAudio.currentTime = 0; } catch (e) {}
             const finalRotation = targetAngle % 360;
             // 0도(위쪽) 기준으로 시계방향으로 누적 각도 계산
             let accAngle = 0;
@@ -121,6 +133,11 @@ function spinRoulette() {
                     origin: { y: 0.6 }
                 });
             }
+            // 축하 효과음 재생
+            try {
+                celebrateAudio.currentTime = 0;
+                celebrateAudio.play();
+            } catch (e) {}
             spinButton.disabled = false;
         }
     });
